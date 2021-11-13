@@ -1,25 +1,33 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import { AppContextProvider } from './context/AppContex';
+import Home from "./routes/Home";
+import {GamesPanel} from "./routes/GamesPanel";
+import {NewGamePanel} from "./routes/NewGamePanel";
+import {ChessPlay} from "./routes/ChessPlay"
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    var [user, setUser] = useState(null);
+
+    return (
+        <AppContextProvider>
+            <div className="container">
+                <Router>
+                    <Switch>
+                        <Route exact path="/" component={Home}/>
+                        <Route exact path="/gamesPanel" component={GamesPanel}/>
+                        <Route exact path="/newGame" component={NewGamePanel}/>
+                        <Route exact path="/chessPlay" component={ChessPlay}/>
+                    </Switch>
+                </Router>
+            </div>
+        </AppContextProvider>
+    );
+
 }
 
 export default App;
