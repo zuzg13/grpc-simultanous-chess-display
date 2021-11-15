@@ -9,24 +9,15 @@ import {getLoggedUser} from "../services/UserServices";
 export const NewGamePanel = () =>{
     const [loggedUser, setLoggedUser] = useState("");
     const [games, setGames] = useState([]);
-    const [numberOfGames, setNumberOfGames] = useState([]);
+    // const [numberOfGames, setNumberOfGames] = useState([]);
 
-    useEffect(() => {
-        getAllGames()
-            .then(games => {
-                console.log(games)
-                setGames(games);
-            });
-    }, []);
-
-    const fetchAllGames = () => {
-        getAllGames()
-            .then(games => {
-                console.log(games)
-                setGames(games);
-                setNumberOfGames(games.length)
-            });
-    }
+    // useEffect(() => {
+    //     getAllGames()
+    //         .then(games => {
+    //             console.log(games)
+    //             setGames(games);
+    //         });
+    // }, []);
 
     useEffect(() => {
         getLoggedUser()
@@ -35,6 +26,17 @@ export const NewGamePanel = () =>{
                 setLoggedUser(userid);
             });
     }, []);
+
+    // const fetchAllGames = () => {
+    //     getAllGames()
+    //         .then(games => {
+    //             console.log(games)
+    //             setGames(games);
+    //             setNumberOfGames(games.length)
+    //         });
+    // }
+
+
 
     return(
         <div>

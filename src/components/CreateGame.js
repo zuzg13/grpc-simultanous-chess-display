@@ -21,23 +21,6 @@ const CreateGame = ({loggedUser}) => {
         history.push("/gamesPanel")
     }
 
-    // const fetchAllUsers = () => {
-    //     getAllUsers()
-    //         .then(users => {
-    //             console.log(users)
-    //             setUsers(users);
-    //             setNumberOfUsers(users.length)
-    //         });
-    // }
-
-    // useEffect(() => {
-    //     getAllUsers()
-    //         .then(users => {
-    //             console.log(users)
-    //             // setUsers(users);
-    //             // setNumberOfUsers(users.length)
-    //         });
-    // }, [])
 
     const onChangeForm = (e) => {
         game.owner = loggedUser;

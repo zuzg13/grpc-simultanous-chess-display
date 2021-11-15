@@ -1,9 +1,29 @@
 import React, {useEffect, useState} from 'react'
 import { useHistory } from "react-router-dom";
 
+// import {JoinGame} from "./JoinGame";
+import {addUserToGame} from "../services/GamesServices";
 
-export const Games = ({games}) => {
+
+export const Games = ({games, loggeduser}) => {
+
+    const history = useHistory();
+
+
     if (games.length === 0) return null
+
+    const gameCreate = (e, gameid) => {
+        e.preventDefault();
+        console.log(loggeduser.userid);
+        console.log(gameid);
+        addUserToGame({gameid: gameid, userid: loggeduser.userid})
+            .then(response => {
+                console.log(response);
+                history.push("/gamesPanel")
+            });
+        // history.push("/");
+
+    }
 
     const GamesRow = (game,index) => {
 
@@ -13,7 +33,10 @@ export const Games = ({games}) => {
                 <td>{game.id}</td>
                 <td>{game.owner.name}</td>
                 <td>{game.usersid.length}/{game.capacity}</td>
-                <td><button type="button"   className="btn btn-outline-primary">Dołącz do gry</button></td>
+                <td>
+                    <button type="button"  onClick={(e)=>{gameCreate(e, game.id);}} className="btn btn-outline-primary">
+                        Dołącz do gry</button>
+                </td>
             </tr>
         )
     };
