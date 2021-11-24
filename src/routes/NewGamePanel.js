@@ -18,14 +18,14 @@ export const NewGamePanel = () =>{
     //             setGames(games);
     //         });
     // }, []);
-
-    useEffect(() => {
-        getLoggedUser()
-            .then(userid => {
-                console.log(userid)
-                setLoggedUser(userid);
-            });
-    }, []);
+    //
+    // useEffect(() => {
+    //     getLoggedUser()
+    //         .then(userid => {
+    //             console.log(userid)
+    //             setLoggedUser(userid);
+    //         });
+    // }, []);
 
     // const fetchAllGames = () => {
     //     getAllGames()
@@ -42,7 +42,7 @@ export const NewGamePanel = () =>{
         <div>
             <Header />
             <p></p>
-            <CreateGame loggedUser={loggedUser}/>
+            <CreateGame/>
         </div>
     );
 

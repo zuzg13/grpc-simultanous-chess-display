@@ -1,6 +1,5 @@
 import React from "react";
 import {Header} from "../components/Header";
-// import NoAccount from "../components/NoAccount";
 import CreateUser from "../components/CreateUser";
 
 const Home = () => {

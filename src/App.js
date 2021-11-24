@@ -7,11 +7,16 @@ import Home from "./routes/Home";
 import {GamesPanel} from "./routes/GamesPanel";
 import {NewGamePanel} from "./routes/NewGamePanel";
 import {ChessPlay} from "./routes/ChessPlay"
+import queryString from "query-string";
 
 
 function App() {
 
     var [user, setUser] = useState(null);
+    window.localStorage.setItem("userId", 0);
+
+    // const parsed = queryString.parse(location.search);
+    // console.log(parsed);
 
     return (
         <AppContextProvider>

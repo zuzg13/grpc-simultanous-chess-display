@@ -2,23 +2,59 @@ import React, {useEffect, useState} from 'react'
 import {createGame} from "../services/GamesServices";
 import { useHistory } from "react-router-dom";
 
+import { Empty, GameInfo, User } from "../protos/game_pb";
+import { GameServiceClient } from "../protos/game_grpc_web_pb";
+const client = new GameServiceClient("http://localhost:8080", null, null);
 
-const CreateGame = ({loggedUser}) => {
+
+const CreateGame = () => {
 
     const history = useHistory();
 
     let [user, setUser] = useState({})
+    let [loggedUser, setLoggedUser] = useState("");
     let [game, setGame] = useState({})
+
+
+    useEffect(() => {
+        // getLoggedUser()
+        //     .then(userid => {
+        //         console.log(userid)
+        //         setLoggedUser(userid);
+        //     });
+        console.log(window.sessionStorage.getItem("userId"));
+        setLoggedUser(window.sessionStorage.getItem("userId"));
+
+    }, []);
 
     const gameCreate = (e) => {
         e.preventDefault();
         onChangeForm(e);
-        createGame(game)
-            .then(response => {
-                console.log(response);
-            });
+        // createGame(game)
+        //     .then(response => {
+        //         console.log(response);
+        //     });
+
+        const gameInfo = new GameInfo();
+        gameInfo.setId(0);
+        gameInfo.setCapacity(game.capacity);
+        gameInfo.setTime(game.time);
+
+        const owner = new User();
+        owner.setId(loggedUser);
+        owner.setName("");
+
+        gameInfo.setOwner(owner);
+        gameInfo.setUsersidList([]);
+
+        client.addNewGame(gameInfo, null, (err, data)=>{
+            if(err) console.log(err);
+            console.log(data);
+        });
+
         history.push("/");
         history.push("/gamesPanel")
+        window.location.reload();
     }
 
 

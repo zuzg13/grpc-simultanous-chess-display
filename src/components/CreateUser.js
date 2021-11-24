@@ -1,22 +1,68 @@
 import React, {useEffect, useState} from 'react'
 import {createUser, getAllUsers} from "../services/UserServices";
 import {useHistory} from "react-router-dom";
+import { Empty, User, UserId} from "../protos/game_pb";
+import { GameServiceClient } from "../protos/game_grpc_web_pb";
+import useStateWithCallback from 'use-state-with-callback';
+
+const client = new GameServiceClient("http://localhost:8080", null, null);
 
 
 const CreateUser = ({loggedUser}) => {
 
     const history = useHistory();
+    // const navigate = useNavigate();
 
     let [user, setUser] = useState({})
+    let [userid, setUserId] = useStateWithCallback(0, count => {
+        if (count > 1) {
+            console.log('Threshold of over 1 reached.');
+            window.sessionStorage.setItem("userId", String(count));
+            console.log(window.sessionStorage.getItem("userId"));
+            history.push("/");
+            history.push("/gamesPanel");
+            window.location.reload();
+        } else {
+            console.log('No threshold reached.');
+        }
+    });
 
-    const userCreate = (e) => {
-        e.preventDefault();
-        createUser(user)
-            .then(response => {
-                console.log(response);
-            });
-        history.push("/");
-        history.push("/gamesPanel")
+
+    // useEffect(()=>{
+    //     user.id = 0;
+    //     setUser(user);
+    //
+    //     let id = 0;
+    //     setUserId(id);
+    // }, []);
+
+    function changeId(val){
+        setUserId(val);
+    }
+
+    const userCreate = async () => {
+        // createUser(user)
+        //     .then(response => {
+        //         // setUser(response);
+        //         // sessionStorage.setItem("userId", response);
+        //         console.log(response);
+        //     });
+        const userNew = new User();
+        userNew.setId(0);
+        userNew.setName(user.name);
+
+        await client.addNewUser(userNew, null, (err, data)=>{
+            // console.log(data.getId());
+            userid = data.getId();
+            // setUserId(userid+1);
+            changeId(data.getId());
+        });
+
+
+
+        // history.push("/");
+        // history.push("/gamesPanel");
+
     }
 
 
