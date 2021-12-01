@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-.idea
+
 
 # testing
 /coverage
@@ -25,4 +25,4 @@ yarn-error.log*
 
 #intellij
 grpc-react.iml
-.idea
+/.idea
