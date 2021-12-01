@@ -6,8 +6,8 @@ import {Container, Col, Row, Button, Alert, Navbar, Nav, Modal, NavbarBrand} fro
 import Chessboard from "chessboardjsx";
 import queryString from "query-string";
 import useStateWithCallback from 'use-state-with-callback';
-import { GameId, BoardInfoRequest, SubGameIdRequest, SubGameId, Move, EndSubGameRequest} from "../protos/game_pb";
-import { GameServiceClient } from "../protos/game_grpc_web_pb";
+import { GameId, BoardInfoRequest, SubGameIdRequest, SubGameId, Move, EndSubGameRequest} from "../../protos/game_pb";
+import { GameServiceClient } from "../../protos/game_grpc_web_pb";
 const client = new GameServiceClient("http://localhost:8080", null, null);
 const Chess = require("chess.js");
 

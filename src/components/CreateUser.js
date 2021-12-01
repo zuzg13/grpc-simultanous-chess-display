@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useHistory} from "react-router-dom";
-import { Empty, User, UserId} from "../protos/game_pb";
+import { Empty, User, UserId} from "../../protos/game_pb";
 import useStateWithCallback from 'use-state-with-callback';
 import {Alert, Button} from "react-bootstrap";
 import ErrorInfo from "./ErrorInfo";

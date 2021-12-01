@@ -6,8 +6,8 @@ import {useHistory} from "react-router-dom";
 import {Col, Navbar, NavbarBrand, Row} from "react-bootstrap";
 import {Container} from "react-bootstrap";
 import {Nav} from "react-bootstrap";
-import { Empty, GameInfos, User, UserId } from "../protos/game_pb";
-import { GameServiceClient} from "../protos/game_grpc_web_pb";
+import { Empty, GameInfos, User, UserId } from "../../protos/game_pb";
+import { GameServiceClient} from "../../protos/game_grpc_web_pb";
 import useStateWithCallback from 'use-state-with-callback';
 import ErrorInfo from "../components/ErrorInfo";
 
