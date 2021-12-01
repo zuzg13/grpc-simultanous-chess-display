@@ -5,7 +5,7 @@
 
 ## Getting started
 
-###What is required:
+### What is required:
 
 - Node.js
 - Docker
