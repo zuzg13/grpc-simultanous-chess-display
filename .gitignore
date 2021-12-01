@@ -26,3 +26,4 @@ yarn-error.log*
 #intellij
 grpc-react.iml
 /.idea
+/.idea/
