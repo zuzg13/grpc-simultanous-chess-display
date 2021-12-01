@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {Header} from "../components/Header";
 import GameInfo from "../components/GameInfo";
 import {useLocation} from "react-router-dom";
-import {Container, Col, Row, Button, Alert, Navbar, Nav, Modal, ModalBody} from "react-bootstrap";
+import {Container, Col, Row, Button, Alert, Navbar, Nav, Modal, NavbarBrand} from "react-bootstrap";
 import Chessboard from "chessboardjsx";
 import queryString from "query-string";
 import useStateWithCallback from 'use-state-with-callback';
@@ -19,6 +19,7 @@ export const ChessPlay = () =>{
         if (isSimulUser) {
             console.log('isSimulUser set to', count);
             setOrientation('white');
+            updateInfo();
         } else {
             console.log('isSimulUser set to', count);
         }
@@ -142,26 +143,10 @@ export const ChessPlay = () =>{
             if(err) console.log(err);
             else setSubGameId(data.getId());
         });
-
+        updateInfo();
 
     }, []);
 
-    // useEffect(()=>{
-    //
-    //     // if(!isSimulUser){
-    //     //
-    //     //     const subGameIdRequest = new SubGameIdRequest();
-    //     //     subGameIdRequest.setGameid(values.gameid);
-    //     //     subGameIdRequest.setOtheruserid(window.sessionStorage.getItem("userId"));
-    //     //
-    //     //     client.getSubGameId(subGameIdRequest, null, (err, data)=>{
-    //     //         if(err) console.log(err);
-    //     //         else setSubGameId(data.getId());
-    //     //     });
-    //     //
-    //     // }
-    //
-    // }, []);
 
     useEffect(()=>{
         if(!isGameOver){
@@ -200,6 +185,7 @@ export const ChessPlay = () =>{
     useEffect(()=>{
         updateInfo();
     }, [gameReady]);
+
 
     const getCurrentBoard = (boardInfoRequest) => {
         client.getBoardInfo(boardInfoRequest, {deadline: 5000}, (err, data)=>{
@@ -246,7 +232,6 @@ export const ChessPlay = () =>{
 
     }
 
-
     // preparing and updating game info
     const updateInfo = ()=>{
         if(!gameReady){
@@ -286,13 +271,6 @@ export const ChessPlay = () =>{
                 setInfo(info);
             }
 
-        }
-        if(areAllGameCoursesOver){
-            info.heading = "Gra zakończona";
-            info.body = "Wszystkie rozgrywki się zakończyły";
-            info.bodyunderline = "Możesz wrócić do strony głównej"
-
-            setInfo(info);
         }
 
         console.log(info);
@@ -430,16 +408,14 @@ export const ChessPlay = () =>{
 
     return(
         <div>
-            <Header />
+            {/*<Header />*/}
             <Navbar bg="dark" variant = "dark" expand="lg">
                 <Container>
+                    <NavbarBrand>Symultana</NavbarBrand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/../gamesPanel">Powrót do listy rozgrywek</Nav.Link>
-                        </Nav>
-                        <Nav className="me-auto">
-                            <Nav.Link onClick={updateInfo}>up</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -469,36 +445,36 @@ export const ChessPlay = () =>{
                         <GameInfo info={info}/>
 
                         <NextButton isSimul={isSimulUser}/>
-                        <p>
-                            isSimulUser = {isSimulUser}
-                        </p>
-                        <p>
-                            gameId = {gameId}
-                        </p>
-                        <p>
-                            subGameId = {subGameId}
-                        </p>
-                        <p>
-                            currentGameId = {currentGameId}
-                        </p>
-                        <p>
-                            currentcolor = {currentColor}
-                        </p>
-                        <p>
-                            orientation = {orientation}
-                        </p>
-                        <p>
-                            isGameover = {isGameOver}
-                        </p>
-                        <p>
-                            userid = {loggedUser}
-                        </p>
-                        <p>
-                            currentFen = {fen}
-                        </p>
-                        <p>
-                            winnerName = {winnerName}
-                        </p>
+                        {/*<p>*/}
+                        {/*    isSimulUser = {isSimulUser}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    gameId = {gameId}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    subGameId = {subGameId}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    currentGameId = {currentGameId}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    currentcolor = {currentColor}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    orientation = {orientation}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    isGameover = {isGameOver}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    userid = {loggedUser}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    currentFen = {fen}*/}
+                        {/*</p>*/}
+                        {/*<p>*/}
+                        {/*    winnerName = {winnerName}*/}
+                        {/*</p>*/}
                     </Col>
                 </Row>
             </Container>

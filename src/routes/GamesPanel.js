@@ -3,7 +3,7 @@ import {Games} from "../components/Games"
 import {UserGames} from "../components/UserGames"
 import {Header} from "../components/Header";
 import {useHistory} from "react-router-dom";
-import {Col, Navbar, Row} from "react-bootstrap";
+import {Col, Navbar, NavbarBrand, Row} from "react-bootstrap";
 import {Container} from "react-bootstrap";
 import {Nav} from "react-bootstrap";
 import { Empty, GameInfos, User, UserId } from "../protos/game_pb";
@@ -142,15 +142,15 @@ export const GamesPanel = () =>{
     return(
         <div>
             <Header />
-            <p>User: {loggedUser}</p>
             <Navbar bg="dark" variant = "dark" expand="lg">
                 <Container>
+                    <NavbarBrand>Symultana</NavbarBrand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link onClick={userGamesGet}>Moje gry</Nav.Link>
-                            <Nav.Link href="/../newGame">Utwórz grę</Nav.Link>
                             <Nav.Link onClick={getGames}>Odśwież listę rozgrywek</Nav.Link>
+                            <Nav.Link href="/../newGame">Utwórz grę</Nav.Link>
                         </Nav>
 
                     </Navbar.Collapse>
