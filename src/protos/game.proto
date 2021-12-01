@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+message User{
+  int64 id = 1;
+  string name = 2;
+}
+
+message UserId{
+  int64 id = 1;
+}
+
+
+message GameInfo{
+  int64 id = 1;
+  User owner = 2;
+  int64 capacity = 3;
+  repeated int64 usersid = 4;
+  int64 time = 5;
+}
+
+message GameId{
+  int64 id=1;
+}
+
+message GamesList{
+  repeated GameInfo gameInfos = 1;
+}
+
+message UserList{
+  repeated User users = 1;
+}
+
+message Empty {}
+
+message Result{
+  bool result = 1;
+}
+
+message AddUserMessage{
+  int64 gameid = 1;
+  int64 userid = 2;
+}
+
+message Board{
+  int64 gameId = 1;
+  int64 subGameId = 2;
+  int64 simulUserId = 3;
+  int64 otherUserId = 4;
+  string board_FEN = 5;
+  string currentColor = 6;
+  bool gameOver = 7;
+  string winnerName = 8;
+}
+
+message BoardInfoRequest{
+  int64 gameId = 1;
+  int64 subGameId = 2;
+}
+
+message EndSubGameRequest{
+  int64 gameId = 1;
+  int64 subGameId = 2;
+  int64 winnerId = 3;
+}
+
+message GameCourse{
+  int64 gameId = 1;
+  repeated int64 readyUsers = 2;
+  int64 currentGameId = 3;
+  bool gameReady = 4;
+  repeated Board boards = 5;
+}
+
+message Move{
+  int64 gameId = 1;
+  int64 subGameId = 2;
+  int64 userId = 3;
+  string updatedBoardFEN = 4;
+}
+
+//message Capture{
+//  int64 gameId = 1;
+//  int64 subGameId = 2;
+//  string position = 3;
+//}
+
+message UserChange{
+  int64 gameId = 1;
+  int64 userId = 2;
+}
+
+message SubGameIdRequest{
+  int64 gameId = 1;
+  int64 otherUserId = 2;
+}
+
+message SubGameId{
+  int64 id = 1;
+}
+
+
+service GameService{
+
+  // users rpc
+  rpc GetAllUsers (Empty) returns (UserList);
+  rpc AddNewUser(User) returns (UserId);
+  rpc RemoveUser(UserId) returns (Empty);
+
+  // game rpc
+  rpc GetAllGames(Empty) returns(GamesList);
+  rpc AddNewGame(GameInfo) returns (GameInfo);
+  rpc AddUserToGame(AddUserMessage) returns (Result);
+  rpc GetUsersGames(UserId) returns (GamesList);
+  rpc CloseGame(GameId) returns (Empty);
+
+  // game course rpc
+  rpc StartGame(UserChange) returns (Empty);
+  rpc GetGameCourseInfo(GameId) returns (GameCourse);
+  rpc GetSubGameId(SubGameIdRequest) returns (SubGameId);
+  rpc EndSubGame(EndSubGameRequest) returns (Empty);
+  rpc DoMove(Move) returns (Board);
+  rpc GetBoardInfo(BoardInfoRequest) returns (Board);
+  rpc GoNext(GameId) returns (GameCourse);
+  rpc AreAllGameCourseOver(GameId) returns (Result);
+
+
+}
+

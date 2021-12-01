@@ -1,17 +1,15 @@
 import React, {useEffect, useState} from 'react'
-import {createUser, getAllUsers} from "../services/UserServices";
 import {useHistory} from "react-router-dom";
 import { Empty, User, UserId} from "../protos/game_pb";
-import { GameServiceClient } from "../protos/game_grpc_web_pb";
 import useStateWithCallback from 'use-state-with-callback';
+import {Alert, Button} from "react-bootstrap";
+import ErrorInfo from "./ErrorInfo";
 
-const client = new GameServiceClient("http://localhost:8080", null, null);
 
 
-const CreateUser = ({loggedUser}) => {
+const CreateUser = ({client}) => {
 
     const history = useHistory();
-    // const navigate = useNavigate();
 
     let [user, setUser] = useState({})
     let [userid, setUserId] = useStateWithCallback(0, count => {
@@ -26,45 +24,31 @@ const CreateUser = ({loggedUser}) => {
             console.log('No threshold reached.');
         }
     });
+    const [errorCode, setErrorCode] = useState(0);
 
-
-    // useEffect(()=>{
-    //     user.id = 0;
-    //     setUser(user);
-    //
-    //     let id = 0;
-    //     setUserId(id);
-    // }, []);
 
     function changeId(val){
         setUserId(val);
     }
 
-    const userCreate = async () => {
-        // createUser(user)
-        //     .then(response => {
-        //         // setUser(response);
-        //         // sessionStorage.setItem("userId", response);
-        //         console.log(response);
-        //     });
+    const userCreate =  () => {
+
         const userNew = new User();
         userNew.setId(0);
         userNew.setName(user.name);
 
-        await client.addNewUser(userNew, null, (err, data)=>{
-            // console.log(data.getId());
-            userid = data.getId();
-            // setUserId(userid+1);
-            changeId(data.getId());
+        client.addNewUser(userNew, null, (err, data)=>{
+            if(err) {
+                console.log(err.message);
+                setErrorCode(err.code);
+            }
+            else{
+                userid = data.getId();
+                changeId(data.getId());
+            }
+
         });
-
-
-
-        // history.push("/");
-        // history.push("/gamesPanel");
-
     }
-
 
     const onChangeForm = (e) => {
         if (e.target.name === 'name') {
@@ -72,8 +56,6 @@ const CreateUser = ({loggedUser}) => {
         }
         setUser(user)
     }
-
-
 
     return(
         <div className="container">
@@ -96,6 +78,10 @@ const CreateUser = ({loggedUser}) => {
                         </div>
                         <button type="button" onClick= {userCreate} className="btn btn-danger">Create</button>
                     </form>
+                </div>
+                <div className="col-md-7 mrgnbtm">
+                    <p></p>
+                    <ErrorInfo err={errorCode}/>
                 </div>
             </div>
         </div>

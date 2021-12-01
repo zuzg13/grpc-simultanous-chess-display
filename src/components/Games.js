@@ -1,39 +1,42 @@
 import React, {useEffect, useState} from 'react'
 import { useHistory } from "react-router-dom";
-import {addUserToGame} from "../services/GamesServices";
 import { Empty, Result, AddUserMessage} from "../protos/game_pb";
-import { GameServiceClient } from "../protos/game_grpc_web_pb";
-const client = new GameServiceClient("http://localhost:8080", null, null);
+// import { GameServiceClient } from "../protos/game_grpc_web_pb";
+import ErrorInfo from "./ErrorInfo";
+import {Alert} from "react-bootstrap";
+import useStateWithCallback from 'use-state-with-callback';
+// const client = new GameServiceClient("http://localhost:8080", null, null);
 
-export const Games = ({games, loggeduser}) => {
+export const Games = ({games, loggeduser, client}) => {
 
     const history = useHistory();
+    const [errorCode, setErrorCode] = useState({});
+    const [errorInfo, setErrorInfo] = useState({});
 
+    if (games.length === 0) return null;
 
-    if (games.length === 0) return null
+    const addUserToGameByGameId = (e, gameid) => {
 
-    const gameCreate = (e, gameid) => {
-        // e.preventDefault();
-        // console.log(loggeduser.userid);
-        // console.log(gameid);
-        // addUserToGame({gameid: gameid, userid: loggeduser.userid})
-        //     .then(response => {
-        //         console.log(response);
-        //
-        //     });
-        // history.push("/");
+        console.log(gameid);
+        console.log(loggeduser);
 
         const addUserMessage = new AddUserMessage();
         addUserMessage.setGameid(gameid);
         addUserMessage.setUserid(loggeduser);
 
         client.addUserToGame(addUserMessage, null, (err, data)=>{
-            if(err) console.log(err);
-            else
+            if(err) {
+                console.log(err);
+                errorInfoSet(err.code);
+            }
+            else{
                 console.log(data.getResult()[0]);
+                window.location.reload();
+            }
+
         })
 
-        window.location.reload();
+
     }
 
     const GamesRow = (game,index) => {
@@ -45,14 +48,21 @@ export const Games = ({games, loggeduser}) => {
                 <td>{game.owner.name}</td>
                 <td>{game.usersid.length}/{game.capacity}</td>
                 <td>
-                    <button type="button"  onClick={(e)=>{gameCreate(e, game.id);}} className="btn btn-outline-primary">
+                    <button type="button"  onClick={(e)=>{addUserToGameByGameId(e, game.id);}} className="btn btn-outline-primary">
                         Dołącz do gry</button>
                 </td>
             </tr>
         )
     };
 
+
+
+    const errorInfoSet = (error) =>{
+        setErrorCode(error);
+    }
+
     const gamesTable = games.map((game,index) => GamesRow(game,index));
+
 
     return(
         <div className="container px-4">
@@ -62,8 +72,8 @@ export const Games = ({games, loggeduser}) => {
                 <thead>
                 <tr>
                     <th>Lp.</th>
-                    <th>Game Id</th>
-                    <th>Owner name</th>
+                    <th>Id Gry</th>
+                    <th>Imię właściciela</th>
                     <th>Liczba miejsc</th>
                     <th></th>
                 </tr>
@@ -72,6 +82,9 @@ export const Games = ({games, loggeduser}) => {
                 {gamesTable}
                 </tbody>
             </table>
+            <p>
+                <ErrorInfo err={errorCode}/>
+            </p>
         </div>
     );
 }

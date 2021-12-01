@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import {createGame} from "../services/GamesServices";
 import { useHistory } from "react-router-dom";
 
 import { Empty, GameInfo, User } from "../protos/game_pb";
-import { GameServiceClient } from "../protos/game_grpc_web_pb";
-const client = new GameServiceClient("http://localhost:8080", null, null);
+// import { GameServiceClient } from "../protos/game_grpc_web_pb";
+// const client = new GameServiceClient("http://localhost:8080", null, null);
 
 
-const CreateGame = () => {
+const CreateGame = ({client}) => {
 
     const history = useHistory();
 
@@ -17,11 +16,6 @@ const CreateGame = () => {
 
 
     useEffect(() => {
-        // getLoggedUser()
-        //     .then(userid => {
-        //         console.log(userid)
-        //         setLoggedUser(userid);
-        //     });
         console.log(window.sessionStorage.getItem("userId"));
         setLoggedUser(window.sessionStorage.getItem("userId"));
 
@@ -30,10 +24,6 @@ const CreateGame = () => {
     const gameCreate = (e) => {
         e.preventDefault();
         onChangeForm(e);
-        // createGame(game)
-        //     .then(response => {
-        //         console.log(response);
-        //     });
 
         const gameInfo = new GameInfo();
         gameInfo.setId(0);
@@ -83,7 +73,6 @@ const CreateGame = () => {
                                 <div className="custom-select" >
                                     <select name='numberOfPlayers' onChange={onChangeForm}>
                                         <option value="0">Wybierz liczbę uczestników:</option>
-                                        <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>

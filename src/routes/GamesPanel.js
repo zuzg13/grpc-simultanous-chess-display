@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
-import {getAllGames, getUserGames} from "../services/GamesServices"
 import {Games} from "../components/Games"
 import {UserGames} from "../components/UserGames"
 import {Header} from "../components/Header";
-import {deleteUser, getLoggedUser} from "../services/UserServices";
 import {useHistory} from "react-router-dom";
-import {Navbar} from "react-bootstrap";
+import {Col, Navbar, Row} from "react-bootstrap";
 import {Container} from "react-bootstrap";
 import {Nav} from "react-bootstrap";
-import NavDropdown from "react-bootstrap";
 import { Empty, GameInfos, User, UserId } from "../protos/game_pb";
 import { GameServiceClient} from "../protos/game_grpc_web_pb";
 import useStateWithCallback from 'use-state-with-callback';
+import ErrorInfo from "../components/ErrorInfo";
 
 const client = new GameServiceClient("http://localhost:8080", null, null);
 
 
 export const GamesPanel = () =>{
-    const [loggedUser, setLoggedUser] = useState("");
+    const [loggedUser, setLoggedUser] = useStateWithCallback("", user=>{
+        // if(user.length > 0){
+        //     // userGamesGet();
+        // }
+    });
     const [games, setGames] = useState([]);
     const [userGames, setUserGames] = useStateWithCallback([], count => {
         if (count.length !==0) {
@@ -26,6 +28,7 @@ export const GamesPanel = () =>{
             console.log('No threshold reached.');
         }
     });
+    const [errorCode, setErrorCode] = useState({});
     const [numberOfGames, setNumberOfGames] = useState([]);
 
     const history = useHistory();
@@ -34,21 +37,26 @@ export const GamesPanel = () =>{
 
 
     useEffect(() => {
-        // getLoggedUser()
-        //     .then(userid => {
-        //         console.log(userid)
-        //         setLoggedUser(userid);
-        //     });
         console.log(window.sessionStorage.getItem("userId"));
         setLoggedUser(window.sessionStorage.getItem("userId"));
 
     }, []);
 
     useEffect(() => {
+        getGames();
+    }, []);
 
-        client.getAllGames(new Empty(), null, (err, response) => {
+    useEffect(()=>{
+        userGamesGet();
+    }, [loggedUser])
+
+
+
+    const getGames = () => {
+        client.getAllGames(new Empty(), {deadline: 5000}, (err, response) => {
             if (err) {
                 console.log(err);
+                errorInfoSet(err.code);
             } else {
                 let gamesList = response?.getGameinfosList() || [];
                 gamesList = gamesList.map( game => game.array);
@@ -69,17 +77,18 @@ export const GamesPanel = () =>{
             }
 
         });
-
-    }, []);
+    }
 
     const userGamesGet = () => {
 
         const userid = new UserId();
         userid.setId(loggedUser);
 
-        client.getUsersGames(userid, null, (err, response) => {
+        client.getUsersGames(userid, {deadline: 5000}, (err, response) => {
             if (err) {
                 console.log(err);
+                errorInfoSet(err.code);
+
             } else {
                 console.log(response);
                 let gamesList = response?.getGameinfosList() || [];
@@ -104,6 +113,10 @@ export const GamesPanel = () =>{
         });
     };
 
+    const errorInfoSet = (error) =>{
+        setErrorCode(error);
+    }
+
     const userDelete = (e) =>{
         e.preventDefault();
         console.log(loggedUser);
@@ -112,21 +125,17 @@ export const GamesPanel = () =>{
         userToDelete.setId(loggedUser);
 
         client.removeUser(userToDelete, null, (err, data)=>{
-            if(err) console.log(err);
+            if(err) {
+                console.log(err);
+                setErrorCode(err.code);
+            }
             else {
                 setLoggedUser(null);
                 window.sessionStorage.setItem("userId", null);
                 console.log(window.sessionStorage.getItem("userId"));
+                history.push("/");
             }
         });
-
-        // deleteUser(loggedUser)
-        //     .then(resp=>{
-        //         console.log(resp);
-        //     });
-
-        history.push("/");
-
     }
 
 
@@ -141,7 +150,7 @@ export const GamesPanel = () =>{
                         <Nav className="me-auto">
                             <Nav.Link onClick={userGamesGet}>Moje gry</Nav.Link>
                             <Nav.Link href="/../newGame">Utwórz grę</Nav.Link>
-
+                            <Nav.Link onClick={getGames}>Odśwież listę rozgrywek</Nav.Link>
                         </Nav>
 
                     </Navbar.Collapse>
@@ -153,17 +162,24 @@ export const GamesPanel = () =>{
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            {/*<p>{loggedUser}</p>*/}
-
-            <div className="row g-2">
-                <div className="container"> </div>
-                    <Games games={games} loggeduser={loggedUser}/>
-                    <UserGames games={userGames} loggeduser={loggedUser}/>
-
-            </div>
-
-
-
+            <Container>
+                <p></p>
+                <Row>
+                    <Col>
+                        <Games games={games} loggeduser={loggedUser} client={client}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <UserGames games={userGames} loggeduser={loggedUser} client={client}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <ErrorInfo err={errorCode}/>
+                    </Col>
+                </Row>
+            </Container>
         </div>
     );
 
