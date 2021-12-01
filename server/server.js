@@ -17,34 +17,15 @@ const systemProto = grpc.loadPackageDefinition(packageDefinition);
 const server = new grpc.Server();
 
 
-let users = [
-    { id: 1, name: "zuz"},
-    { id: 2, name: "fif"},
-    { id: 3, name: "julu"}
-];
+let users = [];
 
-let games = [
-    { id: 1, ownerid: 1, owner: { id: 1, name: "zuz"}, capacity: 2, usersid: [1, 2], time: 5},
-    { id: 2, ownerid: 2, owner: { id: 2, name: "fif"}, capacity: 3, usersid: [2, 3], time: 10}
-];
+let games = [];
 
 
 
 
-let gameCourses = [
-    {gameId: 1, readyUsers: [1, 2], currentGameId: 1, gameReady: true, boards:[
-            {
-                gameId: 1,
-                subGameId: 1,
-                simulUserId: 1,
-                otherUserId: 2,
-                board_FEN: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-                currentColour: 'white',
-                gameOver: false
-            }
-        ]},
-    {gameId: 2, readyUsers: [2, 3], currentGameId: 0, gameReady: false, boards:[]}
-];
+let gameCourses = []
+;
 
 
 server.addService(systemProto.GameService.service, {
