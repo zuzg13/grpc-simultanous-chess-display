@@ -14,7 +14,7 @@ function App() {
     window.localStorage.setItem("userId", 0);
 
     return (
-        <AppContextProvider>
+        // <AppContextProvider>
             <div className="container">
                 <Router>
                     <Switch>
@@ -25,7 +25,7 @@ function App() {
                     </Switch>
                 </Router>
             </div>
-        </AppContextProvider>
+         // </AppContextProvider>
     );
 
 }

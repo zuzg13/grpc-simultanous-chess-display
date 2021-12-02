@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { useHistory } from "react-router-dom";
-import { Empty, Result, AddUserMessage} from "../../protos/game_pb";
+import { Empty, Result, AddUserMessage} from "../protos/game_pb";
 // import { GameServiceClient } from "../protos/game_grpc_web_pb";
 import ErrorInfo from "./ErrorInfo";
 import {Alert} from "react-bootstrap";
