@@ -384,6 +384,10 @@ server.addService(systemProto.GameService.service, {
             }
         }catch (e){
             console.log(e);
+            callback({
+                code: grpc.status.UNKNOWN,
+                message: "Exception while processing data",
+            })
         }
 
     },
