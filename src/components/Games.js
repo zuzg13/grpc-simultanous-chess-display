@@ -1,19 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import { useHistory } from "react-router-dom";
 import { Empty, Result, AddUserMessage} from "../protos/game_pb";
-// import { GameServiceClient } from "../protos/game_grpc_web_pb";
 import ErrorInfo from "./ErrorInfo";
 import {Alert} from "react-bootstrap";
-import useStateWithCallback from 'use-state-with-callback';
-// const client = new GameServiceClient("http://localhost:8080", null, null);
+
 
 export const Games = ({games, loggeduser, client}) => {
 
     const history = useHistory();
     const [errorCode, setErrorCode] = useState({});
-    const [errorInfo, setErrorInfo] = useState({});
 
-    if (games.length === 0) return null;
+
+    if (games.length === 0) return <Alert variant='info'>Aktualnie nie ma żadnych utworzonych rozgrywek</Alert>;;
 
     const addUserToGameByGameId = (e, gameid) => {
 
