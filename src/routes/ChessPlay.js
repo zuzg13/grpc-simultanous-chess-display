@@ -116,13 +116,14 @@ export const ChessPlay = () =>{
     // collecting game data
 
     useEffect(()=>{
+
         const gameIdMessage = new GameId();
         gameIdMessage.setId(values.gameid);
 
-        client.getGameCourseInfo(gameIdMessage, null, (err, data)=>{
-            if(err)
+        client.getGameCourseInfo(gameIdMessage, null, (err, data) => {
+            if (err)
                 console.log(err);
-            else{
+            else {
                 setCurrentGameId(data.getCurrentgameid());
                 setGameReady(data.getGameready());
 
@@ -139,8 +140,8 @@ export const ChessPlay = () =>{
         subGameIdRequest.setGameid(values.gameid);
         subGameIdRequest.setOtheruserid(window.sessionStorage.getItem("userId"));
 
-        client.getSubGameId(subGameIdRequest, null, (err, data)=>{
-            if(err) console.log(err);
+        client.getSubGameId(subGameIdRequest, null, (err, data) => {
+            if (err) console.log(err);
             else setSubGameId(data.getId());
         });
         updateInfo();
@@ -236,7 +237,7 @@ export const ChessPlay = () =>{
     const updateInfo = ()=>{
         if(!gameReady){
             info.heading = "Oczekiwanie na pozostałych graczy";
-            info.body = "Zostaniesz poinformowany, gdy gra będzie gotowa";
+            info.body = "Odśwież aby sprawdzić czy gra jest już w trakcie";
             info.bodyunderline = "Nie opuszczaj gry."
 
             setInfo(info);
@@ -445,36 +446,6 @@ export const ChessPlay = () =>{
                         <GameInfo info={info}/>
 
                         <NextButton isSimul={isSimulUser}/>
-                        {/*<p>*/}
-                        {/*    isSimulUser = {isSimulUser}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    gameId = {gameId}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    subGameId = {subGameId}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    currentGameId = {currentGameId}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    currentcolor = {currentColor}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    orientation = {orientation}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    isGameover = {isGameOver}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    userid = {loggedUser}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    currentFen = {fen}*/}
-                        {/*</p>*/}
-                        {/*<p>*/}
-                        {/*    winnerName = {winnerName}*/}
-                        {/*</p>*/}
                     </Col>
                 </Row>
             </Container>
