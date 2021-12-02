@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react'
 import { useHistory } from "react-router-dom";
 
 import { Empty, GameInfo, User } from "../protos/game_pb";
-// import { GameServiceClient } from "../protos/game_grpc_web_pb";
-// const client = new GameServiceClient("http://localhost:8080", null, null);
 
 
 const CreateGame = ({client}) => {
