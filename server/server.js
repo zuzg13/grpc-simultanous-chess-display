@@ -38,7 +38,14 @@ server.addService(systemProto.GameService.service, {
         console.log('request data:');
         console.log(call.request);
 
-        let newid = users[users.length-1].id + 1;
+        let newid;
+        try{
+            newid = users[users.length-1].id + 1;
+        }
+        catch(e){
+            console.log(e);
+            newid = 1;
+        }
         let _user = { id: newid, name: call.request.name};
         users.push(_user);
 
@@ -66,7 +73,9 @@ server.addService(systemProto.GameService.service, {
         console.log('---addNewGame request---');
         console.log(call.request);
         try{
-            let newgameid = games[games.length-1].id + 1;
+            let newgameid;
+            if(games.length!==0) newgameid = games[games.length-1].id + 1;
+            else newgameid = 1;
             let _game = {
                 id: newgameid,
                 owner: {
