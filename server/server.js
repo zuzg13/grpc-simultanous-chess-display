@@ -1,5 +1,5 @@
 const grpc = require("@grpc/grpc-js");
-const PROTO_PATH = "./src/protos/game.proto";
+const PROTO_PATH = "./protos/game.proto";
 const protoLoader = require("@grpc/proto-loader");
 const _ = require('lodash');
 const {Chess} = require('chess.js')
