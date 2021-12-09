@@ -9,13 +9,11 @@ message UserId{
   int64 id = 1;
 }
 
-
 message GameInfo{
   int64 id = 1;
   User owner = 2;
   int64 capacity = 3;
   repeated int64 usersid = 4;
-  int64 time = 5;
 }
 
 message GameId{
@@ -78,11 +76,6 @@ message Move{
   string updatedBoardFEN = 4;
 }
 
-//message Capture{
-//  int64 gameId = 1;
-//  int64 subGameId = 2;
-//  string position = 3;
-//}
 
 message UserChange{
   int64 gameId = 1;
@@ -102,7 +95,6 @@ message SubGameId{
 service GameService{
 
   // users rpc
-  rpc GetAllUsers (Empty) returns (UserList);
   rpc AddNewUser(User) returns (UserId);
   rpc RemoveUser(UserId) returns (Empty);
 

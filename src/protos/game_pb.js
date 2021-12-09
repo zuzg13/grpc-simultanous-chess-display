@@ -2501,7 +2501,7 @@ proto.EndSubGameRequest.prototype.getWinnerid = function() {
 
 
 /**
- * @param {string} value
+ * @param {number} value
  * @return {!proto.EndSubGameRequest} returns this
  */
 proto.EndSubGameRequest.prototype.setWinnerid = function(value) {

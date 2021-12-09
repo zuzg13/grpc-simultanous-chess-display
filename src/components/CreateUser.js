@@ -58,33 +58,27 @@ const CreateUser = ({client}) => {
     }
 
     return(
-        <div className="container">
-            <div className="row">
-                <div className="col-md-7 mrgnbtm">
-                    <p></p>
-                    <h2>Podaj swoje imię by rozpocząć</h2>
-                    <form>
-                        <div className="row">
-                            <div className="form-group col-md-12">
-                                <label htmlFor="exampleInputName1">Imię: </label>
-                                <input
-                                    type="text"
-                                    onChange={onChangeForm}
-                                    className="form-control"
-                                    name="name"
-                                    id="name"
-                                    placeholder="Your name" />
-                            </div>
-                        </div>
-                        <button type="button" onClick= {userCreate} className="btn btn-danger">Create</button>
-                    </form>
+        <div>
+            <p></p>
+            <h2>Podaj nazwę użytkownika by rozpocząć</h2>
+            <form>
+                <div className="row">
+                    <div className="form-group col-md-12">
+                        <label htmlFor="exampleInputName1">Nazwa użytkownika </label>
+                        <input
+                            type="text"
+                            onChange={onChangeForm}
+                            className="form-control"
+                            name="name"
+                            id="name"
+                            placeholder="Nazwa użytkownika" />
+                    </div>
                 </div>
-                <div className="col-md-7 mrgnbtm">
-                    <p></p>
-                    <ErrorInfo err={errorCode}/>
-                </div>
-            </div>
-        </div>
+                <button type="button" onClick= {userCreate} className="btn btn-danger">Wejdź</button>
+            </form>
+            <p></p>
+            <ErrorInfo err={errorCode}/>
+         </div>
     )
 }
 

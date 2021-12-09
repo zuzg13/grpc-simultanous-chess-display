@@ -46,8 +46,8 @@ export const UserGames = ({games, loggeduser, client}) => {
                 <thead>
                 <tr>
                     <th>Lp.</th>
-                    <th>Game Id</th>
-                    <th>Owner name</th>
+                    <th>Id Gry</th>
+                    <th>Właściciel</th>
                     <th>Liczba miejsc</th>
                     <th></th>
                 </tr>

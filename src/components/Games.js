@@ -71,7 +71,7 @@ export const Games = ({games, loggeduser, client}) => {
                 <tr>
                     <th>Lp.</th>
                     <th>Id Gry</th>
-                    <th>Imię właściciela</th>
+                    <th>Właściciel</th>
                     <th>Liczba miejsc</th>
                     <th></th>
                 </tr>

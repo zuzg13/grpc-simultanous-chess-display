@@ -21,6 +21,22 @@ const  ErrorInfo  = ({err}) => {
                 </Alert>;
             // }
         }
+        else if (err === 6){
+            return <Alert variant="warning">
+                <Alert.Heading>W systemie zalogowany jest już użytkownik o tej nazwie</Alert.Heading>
+                <p>
+                    Podaj inną nazwę.
+                </p>
+            </Alert>;
+        }
+        else if (err === 3){
+            return <Alert variant="warning">
+                <Alert.Heading>Już jesteś dodany do tej rozgrywki</Alert.Heading>
+                <p>
+                    Nie możesz do niej dołączyć.
+                </p>
+            </Alert>;
+        }
         else return null;
     }catch (e) {
         console.log(e);

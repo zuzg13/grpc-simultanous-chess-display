@@ -1045,5 +1045,122 @@ proto.GameServicePromiseClient.prototype.areAllGameCourseOver =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.Move,
+ *   !proto.Empty>}
+ */
+const methodDescriptor_GameService_DoMoveStream = new grpc.web.MethodDescriptor(
+  '/GameService/DoMoveStream',
+  grpc.web.MethodType.UNARY,
+  proto.Move,
+  proto.Empty,
+  /**
+   * @param {!proto.Move} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Empty.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.Move} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.Empty)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.Empty>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.GameServiceClient.prototype.doMoveStream =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/GameService/DoMoveStream',
+      request,
+      metadata || {},
+      methodDescriptor_GameService_DoMoveStream,
+      callback);
+};
+
+
+/**
+ * @param {!proto.Move} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.Empty>}
+ *     Promise that resolves to the response
+ */
+proto.GameServicePromiseClient.prototype.doMoveStream =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/GameService/DoMoveStream',
+      request,
+      metadata || {},
+      methodDescriptor_GameService_DoMoveStream);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.BoardInfoRequest,
+ *   !proto.Board>}
+ */
+const methodDescriptor_GameService_BoardStream = new grpc.web.MethodDescriptor(
+  '/GameService/BoardStream',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.BoardInfoRequest,
+  proto.Board,
+  /**
+   * @param {!proto.BoardInfoRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.Board.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.BoardInfoRequest} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.Board>}
+ *     The XHR Node Readable Stream
+ */
+proto.GameServiceClient.prototype.boardStream =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/GameService/BoardStream',
+      request,
+      metadata || {},
+      methodDescriptor_GameService_BoardStream);
+};
+
+
+/**
+ * @param {!proto.BoardInfoRequest} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.Board>}
+ *     The XHR Node Readable Stream
+ */
+proto.GameServicePromiseClient.prototype.boardStream =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/GameService/BoardStream',
+      request,
+      metadata || {},
+      methodDescriptor_GameService_BoardStream);
+};
+
+
 module.exports = proto;
 

@@ -1,7 +1,6 @@
 const grpc = require("@grpc/grpc-js");
 const PROTO_PATH = "./protos/game.proto";
 const protoLoader = require("@grpc/proto-loader");
-const _ = require('lodash');
 const {Chess} = require('chess.js')
 
 const options = {
@@ -17,15 +16,13 @@ const systemProto = grpc.loadPackageDefinition(packageDefinition);
 const server = new grpc.Server();
 
 
-let users = [];
+let users = [{id:1, name: 'admin'}];
 
 let games = [];
 
+let gameCourses = [];
 
 
-
-let gameCourses = []
-;
 
 
 server.addService(systemProto.GameService.service, {
@@ -40,27 +37,61 @@ server.addService(systemProto.GameService.service, {
 
         let newid;
         try{
-            newid = users[users.length-1].id + 1;
+            const nameMap = users.map(el => el.name);
+
+            if(nameMap.indexOf(call.request.name) !== -1) {
+                console.log({
+                    code: grpc.status.ALREADY_EXISTS,
+                    message: 'there is already user with the same name'
+                });
+                callback({
+                    code: grpc.status.ALREADY_EXISTS,
+                    message: 'there is already user with the same name'
+                });
+            }
+            else{
+
+                if(users.length !== 0){
+                    newid = users[users.length-1].id + 1;
+                }
+                else {
+                    newid = 1;
+                }
+
+                let _user = { id: newid, name: call.request.name};
+                users.push(_user);
+
+                console.log('callback data:');
+                console.log({id: newid});
+                callback(null, {id: newid});
+            }
         }
         catch(e){
             console.log(e);
-            newid = 1;
+            callback({
+                code: grpc.status.UNKNOWN,
+                message: "Exception during handling request",
+            });
         }
-        let _user = { id: newid, name: call.request.name};
-        users.push(_user);
 
-        console.log('callback data:');
-        console.log({id: newid});
 
-        callback(null, {id: newid});
+
     },
     removeUser: (call, callback)=>{
         console.log('---removeUser request---');
         console.log('request data:');
         console.log(call.request);
-        const userId = call.request.id;
-        users = users.filter(({ id }) => id !== userId);
-        callback(null, {});
+        try{
+            const userId = parseInt(call.request.id, 10);
+            users = users.filter(({ id }) => id !== userId);
+            callback(null, {});
+        }catch(e) {
+            console.log(e);
+            callback({
+                code: grpc.status.UNKNOWN,
+                message: "Exception during handling request",
+            });
+        }
     },
 
     getAllGames: (call, callback) => {
@@ -84,7 +115,6 @@ server.addService(systemProto.GameService.service, {
                 },
                 capacity: parseInt(call.request.capacity),
                 usersid: [parseInt(call.request.owner.id, 10)],
-                time: call.request.time
             };
             games.push(_game);
 
@@ -108,6 +138,7 @@ server.addService(systemProto.GameService.service, {
             console.log(call.request);
 
             const game_info = games.filter(el => el.id === parseInt(call.request.gameid, 10));
+            console.log(game_info);
 
             if(game_info[0].usersid.length === game_info[0].capacity){
                 callback({
@@ -118,19 +149,23 @@ server.addService(systemProto.GameService.service, {
             else{
                 let game_map = games.map(x=>x.id);
                 let index = game_map.indexOf(parseInt(call.request.gameid, 10));
+                console.log(game_map);
+                console.log(index);
+                console.log(games[index].usersid.indexOf(parseInt(call.request.userid, 10)));
 
-                console.log(games[index].usersid.indexOf(call.request.userid));
 
-                if(games[index].usersid.indexOf(call.request.userid) !== -1)
+                if(games[index].usersid.indexOf(parseInt(call.request.userid, 10)) !== -1)
                     callback({
                         code: grpc.status.INVALID_ARGUMENT,
                         message: "User is already in this game course",
                     }, {result: false});
+                else{
+                    games[index].usersid.push(parseInt(call.request.userid, 10));
+                    console.log('callback data:');
+                    console.log({result: true});
+                    callback(null, {result: true});
+                }
 
-                games[index].usersid.push(parseInt(call.request.userid, 10));
-                console.log('callback data:');
-                console.log({result: true});
-                callback(null, {result: true});
             }
         }catch (e){
             console.log(e);
@@ -220,6 +255,7 @@ server.addService(systemProto.GameService.service, {
 
                 gameCourses[index].boards = boards;
                 console.log(gameCourses[index]);
+
             }
 
         }catch (e){
@@ -444,9 +480,9 @@ server.addService(systemProto.GameService.service, {
                 message: "Exception while processing data",
             })
         }
-    }
+    },
 
-})
+});
 
 
 

@@ -9,6 +9,7 @@ import useStateWithCallback from 'use-state-with-callback';
 import { GameId, BoardInfoRequest, SubGameIdRequest, SubGameId, Move, EndSubGameRequest} from "../protos/game_pb";
 import { GameServiceClient } from '../protos/game_grpc_web_pb';
 const client = new GameServiceClient("http://localhost:8080", null, null);
+
 const Chess = require("chess.js");
 
 export const ChessPlay = () =>{
@@ -34,19 +35,10 @@ export const ChessPlay = () =>{
         }
     });
 
-    const [gameReady, setGameReady] = useStateWithCallback(false, count => {
-        if (count > 1) {
-            console.log('gameReady set to', count);
-
-        } else {
-            console.log('gameReady set to', count);
-
-        }
-    });
+    const [gameReady, setGameReady] = useState(false);
     const [currentGameId, setCurrentGameId] = useStateWithCallback(0, count => {
         if (count > 0) {
             console.log('currentGameId set to', count);
-            // setSubGameId(count);
 
         } else {
             console.log('currentGameId set to', count);
@@ -150,18 +142,6 @@ export const ChessPlay = () =>{
 
 
     useEffect(()=>{
-        if(!isGameOver){
-            const boardInfoRequest = new BoardInfoRequest();
-            boardInfoRequest.setGameid(values.gameid);
-            if(isSimulUser) boardInfoRequest.setSubgameid(currentGameId);
-            else boardInfoRequest.setSubgameid(subGameId);
-            console.log(subGameId, currentGameId);
-            getCurrentBoard(boardInfoRequest);
-        }
-
-    }, []);
-
-    useEffect(()=>{
         setInterval(()=>{
             if(winnerName === ""){
                 const boardInfoRequest = new BoardInfoRequest();
@@ -198,7 +178,6 @@ export const ChessPlay = () =>{
                 updateColor(data.getCurrentcolor());
                 if(data.getGameover()) {
                     setIsGameOver(data.getGameover());
-                    // window.localStorage.setItem('isGameOver', 'true');
                     setModalShow(true);
                 }
                 if (data.getWinnername() !== ""){
@@ -297,8 +276,6 @@ export const ChessPlay = () =>{
                     }
                 });
 
-                // if (currentColor === 'white') setCurrentColor('black');
-                // else setCurrentColor('white');
                 if(currentColor === 'white') updateColor('black');
                 else updateColor('black');
 
@@ -307,7 +284,6 @@ export const ChessPlay = () =>{
                     gameOverRequest.setGameid(gameId);
                     gameOverRequest.setSubgameid(subGameId);
                     gameOverRequest.setWinnerid(loggedUser);
-
 
                     client.endSubGame(gameOverRequest, {deadline: 10000}, (err, data)=>{
                         if(err) console.log(err);
@@ -334,14 +310,13 @@ export const ChessPlay = () =>{
         updateInfo();
     };
 
-    const MyVerticallyCenteredModal = (props) => {
+    const EndGameModal = (props) => {
         if(isSimulUser === true && numOfBoards > 1){
             return (
                 <Modal
                     {...props}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
+                    backdrop="static"
+                    keyboard={false}
                 >
                     <Modal.Header>
                         <Modal.Title id="contained-modal-title-vcenter">
@@ -367,9 +342,8 @@ export const ChessPlay = () =>{
             return (
                 <Modal
                     {...props}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
+                    backdrop="static"
+                    keyboard={false}
                 >
                     <Modal.Header>
                         <Modal.Title id="contained-modal-title-vcenter">
@@ -431,7 +405,7 @@ export const ChessPlay = () =>{
                                 width={600}
                                 position={fen}
                                 orientation={orientation}
-                                draggable={gameReady}
+                                draggable={gameReady || winnerName === ""}
                                 onDrop={(move) =>
                                     handleMove({
                                         from: move.sourceSquare,
@@ -444,12 +418,11 @@ export const ChessPlay = () =>{
                     </Col>
                     <Col sm={4}>
                         <GameInfo info={info}/>
-
                         <NextButton isSimul={isSimulUser}/>
                     </Col>
                 </Row>
             </Container>
-            <MyVerticallyCenteredModal
+            <EndGameModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
             />
