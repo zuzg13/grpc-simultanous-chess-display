@@ -121,7 +121,7 @@ server.addService(systemProto.GameService.service, {
             gameCourses.push({gameId: newgameid, readyUsers: [], currentGameId: 0, gameReady: false, boards:[]})
             console.log('callback data:');
             console.log(_game);
-            callback(null, {game: _game});
+            callback(null,  _game);
         }catch(e){
             console.log(e);
             callback({
@@ -176,7 +176,7 @@ server.addService(systemProto.GameService.service, {
         }
     },
     closeGame:(call, callback)=>{
-        const gameId = call.request.id;
+        const gameId = parseInt(call.request.id, 10);
         games = games.filter(({ id }) => id !== gameId);
         callback(null, {});
     },
