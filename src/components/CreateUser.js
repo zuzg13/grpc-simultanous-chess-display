@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {useHistory} from "react-router-dom";
-import { Empty, User, UserId} from "../protos/game_pb";
+import { User, UserId} from "../protos/game_pb";
 import useStateWithCallback from 'use-state-with-callback';
-import {Alert, Button} from "react-bootstrap";
 import ErrorInfo from "./ErrorInfo";
 
 
@@ -38,6 +37,7 @@ const CreateUser = ({client}) => {
         userNew.setName(user.name);
 
         client.addNewUser(userNew, null, (err, data)=>{
+
             if(err) {
                 console.log(err.message);
                 setErrorCode(err.code);
@@ -46,6 +46,7 @@ const CreateUser = ({client}) => {
                 userid = data.getId();
                 changeId(data.getId());
             }
+
 
         });
     }
@@ -56,6 +57,15 @@ const CreateUser = ({client}) => {
         }
         setUser(user)
     }
+
+    useEffect(()=>{
+
+        if(window.sessionStorage.getItem("userId") !== 'null' && window.sessionStorage.getItem("userId") !== null) {
+            console.log(window.sessionStorage.getItem("userId"))
+            history.push("/gamesPanel");
+            window.location.reload();
+        }
+    });
 
     return(
         <div>
