@@ -13,11 +13,7 @@ const client = new GameServiceClient("http://localhost:8080", null, null);
 
 
 export const GamesPanel = () =>{
-    const [loggedUser, setLoggedUser] = useStateWithCallback("", user=>{
-        // if(user.length > 0){
-        //     // userGamesGet();
-        // }
-    });
+    const [loggedUser, setLoggedUser] = useState("");
     const [games, setGames] = useState([]);
     const [userGames, setUserGames] = useStateWithCallback([], count => {
         if (count.length !==0) {
@@ -27,16 +23,18 @@ export const GamesPanel = () =>{
         }
     });
     const [errorCode, setErrorCode] = useState({});
-    const [numberOfGames, setNumberOfGames] = useState([]);
 
     const history = useHistory();
-    // const navigate = useNavigate();
 
 
 
     useEffect(() => {
-        console.log(window.sessionStorage.getItem("userId"));
-        setLoggedUser(window.sessionStorage.getItem("userId"));
+        if(window.sessionStorage.getItem("userId") === 'null' || window.sessionStorage.getItem("userId") === null){
+            setLoggedUser('null');
+            history.push('/');
+        }
+        else
+            setLoggedUser(window.sessionStorage.getItem("userId"));
 
     }, []);
 
@@ -49,29 +47,33 @@ export const GamesPanel = () =>{
     }, [loggedUser])
 
 
+    const parseGameInfos = (gamesInfos) => {
+        let gamesList = gamesInfos.map(game => game.array);
+
+        for(let ind = 0; ind < gamesList.length; ind++) {
+            console.log(gamesList[ind]);
+            let tmp_array = gamesList[ind];
+            gamesList[ind] = [];
+            gamesList[ind].id = tmp_array[0];
+            gamesList[ind].owner = [];
+            gamesList[ind].owner.id = tmp_array[1][0];
+            gamesList[ind].owner.name = tmp_array[1][1];
+            gamesList[ind].capacity = tmp_array[2];
+            gamesList[ind].usersid = tmp_array[3];
+            gamesList[ind].time = tmp_array[4];
+        }
+
+        return gamesList;
+    }
 
     const getGames = () => {
-        client.getAllGames(new Empty(), {deadline: 5000}, (err, response) => {
+        client.getAllGames(new Empty(), null, (err, response) => {
             if (err) {
                 console.log(err);
                 errorInfoSet(err.code);
             } else {
                 let gamesList = response?.getGameinfosList() || [];
-                gamesList = gamesList.map( game => game.array);
-
-                for(let ind = 0; ind < gamesList.length; ind++) {
-                    console.log(gamesList[ind]);
-                    let tmp_array = gamesList[ind];
-                    gamesList[ind] = [];
-                    gamesList[ind].id = tmp_array[0];
-                    gamesList[ind].owner = [];
-                    gamesList[ind].owner.id = tmp_array[1][0];
-                    gamesList[ind].owner.name = tmp_array[1][1];
-                    gamesList[ind].capacity = tmp_array[2];
-                    gamesList[ind].usersid = tmp_array[3];
-                    gamesList[ind].time = tmp_array[4];
-                }
-                setGames(gamesList);
+                setGames(parseGameInfos(gamesList));
             }
 
         });
@@ -79,36 +81,26 @@ export const GamesPanel = () =>{
 
     const userGamesGet = () => {
 
-        const userid = new UserId();
-        userid.setId(loggedUser);
+        if(loggedUser !== 'null'){
+            const userid = new UserId();
+            userid.setId(loggedUser);
 
-        client.getUsersGames(userid, {deadline: 5000}, (err, response) => {
-            if (err) {
-                console.log(err);
-                errorInfoSet(err.code);
+            client.getUsersGames(userid, null, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    errorInfoSet(err.code);
 
-            } else {
-                console.log(response);
-                let gamesList = response?.getGameinfosList() || [];
-                gamesList = gamesList.map(game => game.array);
+                } else {
 
-
-                for(let ind = 0; ind < gamesList.length; ind++) {
-                    console.log(gamesList[ind]);
-                    let tmp_array = gamesList[ind];
-                    gamesList[ind] = [];
-                    gamesList[ind].id = tmp_array[0];
-                    gamesList[ind].owner = [];
-                    gamesList[ind].owner.id = tmp_array[1][0];
-                    gamesList[ind].owner.name = tmp_array[1][1];
-                    gamesList[ind].capacity = tmp_array[2];
-                    gamesList[ind].usersid = tmp_array[3];
-                    gamesList[ind].time = tmp_array[4];
+                    let gamesList = response?.getGameinfosList() || [];
+                    setUserGames(parseGameInfos(gamesList));
                 }
-                setUserGames(gamesList);
-            }
 
-        });
+            });
+        }
+
+
+
     };
 
     const errorInfoSet = (error) =>{
@@ -147,7 +139,7 @@ export const GamesPanel = () =>{
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link onClick={userGamesGet}>Moje gry</Nav.Link>
-                            <Nav.Link onClick={getGames}>Odśwież listę rozgrywek</Nav.Link>
+                            <Nav.Link onClick={()=>{getGames();userGamesGet();}}>Odśwież listę rozgrywek</Nav.Link>
                             <Nav.Link href="/../newGame">Utwórz grę</Nav.Link>
                         </Nav>
 
