@@ -1,90 +1,53 @@
 import React, { useEffect, useState } from "react";
-import {Header} from "../components/Header";
 import GameInfo from "../components/GameInfo";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {Container, Col, Row, Button, Alert, Navbar, Nav, Modal, NavbarBrand} from "react-bootstrap";
 import Chessboard from "chessboardjsx";
 import queryString from "query-string";
 import useStateWithCallback from 'use-state-with-callback';
 import { GameId, BoardInfoRequest, SubGameIdRequest, SubGameId, Move, EndSubGameRequest} from "../protos/game_pb";
 import { GameServiceClient } from '../protos/game_grpc_web_pb';
+
+
 const client = new GameServiceClient("http://localhost:8080", null, null);
 
 const Chess = require("chess.js");
 
 export const ChessPlay = () =>{
 
+    const history = useHistory();
+
     const [loggedUser, setLoggedUser] = useState("");
     const [modalShow, setModalShow] = useState(false);
-    const [isSimulUser, setisSimulUser] = useStateWithCallback(false, count => {
+    const [isSimulUser, setisSimulUser] = useStateWithCallback(false, data => {
         if (isSimulUser) {
-            console.log('isSimulUser set to', count);
             setOrientation('white');
             updateInfo();
-        } else {
-            console.log('isSimulUser set to', count);
         }
     });
-    const [simulUserId, setSimulUserId] = useStateWithCallback(0, count => {
-        if (count > 0) {
-            console.log('simulUserId set to', count);
-            setisSimulUser(parseInt(loggedUser, 10) === count);
+    const [simulUserId, setSimulUserId] = useStateWithCallback(0, id => {
+        if (id > 0) {
+            setisSimulUser(parseInt(loggedUser, 10) === id);
 
-        } else {
-            console.log('simulUserId set to', count);
         }
     });
 
     const [gameReady, setGameReady] = useState(false);
-    const [currentGameId, setCurrentGameId] = useStateWithCallback(0, count => {
-        if (count > 0) {
-            console.log('currentGameId set to', count);
-
-        } else {
-            console.log('currentGameId set to', count);
-        }
-    });
-    const [subGameId, setSubGameId] = useStateWithCallback(0, count => {
-        if (count > 0) {
-            console.log('Subgameid of over 0 reached.');
-            }
-
-    });
-    const [gameId, setGameId] = useStateWithCallback(0, id=>{
-        if (id > 0) {
-            console.log('gameId set to', id);
-
-        } else {
-            console.log('gameId set to', id);
-        }
-    });
-    const [orientation, setOrientation] = useStateWithCallback("black", color=>{});
-    const [fen, setFen] = useStateWithCallback("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-            new_fen=> {
-        if(new_fen === "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"){
-            console.log('did not changed');
-        }
-        else{
-            console.log('changed');
-        }
-    });
-
+    const [currentGameId, setCurrentGameId] = useState(0);
+    const [subGameId, setSubGameId] = useState(0)
+    const [gameId, setGameId] = useState(0);
+    const [orientation, setOrientation] = useState("black");
+    const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     const [winnerName, setWinnerName] = useState("");
 
-    const [info, setInfo] = useStateWithCallback({}, info => {console.log(info)});
-    const [moveDone, setMoveDone] = useState(false);
+    const [info, setInfo] = useState({});
 
     const [currentColor, setCurrentColor] = useStateWithCallback("white", color =>{
-        //
+        console.log(color);
     });
     const [isGameOver, setIsGameOver] = useState(false);
 
-    const [areAllGameCoursesOver, setAreAllGameCoursesOver] = useStateWithCallback(false, value =>{
-        if(value){
-            console.log('areAllGameCoursesOver set to true')
-
-        }
-    });
+    const [areAllGameCoursesOver, setAreAllGameCoursesOver] = useState(false);
     const [numOfBoards, setNumOfBoards] = useState(0);
 
     const { search } = useLocation()
@@ -106,7 +69,6 @@ export const ChessPlay = () =>{
 
 
     // collecting game data
-
     useEffect(()=>{
 
         const gameIdMessage = new GameId();
@@ -138,34 +100,22 @@ export const ChessPlay = () =>{
         });
         updateInfo();
 
-    }, []);
+    }, [loggedUser, setSimulUserId, setisSimulUser, simulUserId, values.gameid]);
 
-
+    // collecting board data
     useEffect(()=>{
-        setInterval(()=>{
-            if(winnerName === ""){
+        if(isGameOver === false) {
+            setInterval(() => {
                 const boardInfoRequest = new BoardInfoRequest();
                 boardInfoRequest.setGameid(values.gameid);
-                if(isSimulUser) boardInfoRequest.setSubgameid(currentGameId);
+                if (isSimulUser) boardInfoRequest.setSubgameid(currentGameId);
                 else boardInfoRequest.setSubgameid(subGameId);
                 console.log(subGameId, currentGameId);
                 getCurrentBoard(boardInfoRequest);
-            }
-        },5000);
-    });
+            }, 5000);
+        }
+    }, [currentGameId, isGameOver, isSimulUser, subGameId, values.gameid]);
 
-
-    useEffect(()=>{
-        updateInfo();
-    }, [isGameOver]);
-
-    useEffect(()=>{
-        updateInfo();
-    }, [currentColor]);
-
-    useEffect(()=>{
-        updateInfo();
-    }, [gameReady]);
 
 
     const getCurrentBoard = (boardInfoRequest) => {
@@ -176,15 +126,29 @@ export const ChessPlay = () =>{
                 chess.load(data.getBoardFen());
 
                 updateColor(data.getCurrentcolor());
+                setCurrentColor(data.getCurrentcolor());
                 if(data.getGameover()) {
                     setIsGameOver(data.getGameover());
-                    setModalShow(true);
+                    updateInfo();
                 }
                 if (data.getWinnername() !== ""){
                     setWinnerName(data.getWinnername());
                 }
             }
         });
+        updateInfo();
+    }
+
+    const GameAlert = () => {
+        updateInfo();
+        return <GameInfo info={info}/>;
+    }
+
+    const CloseButton = () => {
+        if (isSimulUser === true && isGameOver === true)
+            return <Button onClick={closeGame} centered >Zakończ grę</Button>;
+        else
+            return null;
     }
 
     const NextButton = (isSimul) => {
@@ -207,12 +171,10 @@ export const ChessPlay = () =>{
         gameIdMessage.setId(gameId);
         client.goNext(gameIdMessage, null, (err, data)=>{
             window.location.reload();
-            setMoveDone(false);
         });
 
     }
 
-    // preparing and updating game info
     const updateInfo = ()=>{
         if(!gameReady){
             info.heading = "Oczekiwanie na pozostałych graczy";
@@ -238,12 +200,10 @@ export const ChessPlay = () =>{
                 setInfo(info);
             }else{
                 info.heading = "Koniec gry";
-                if(orientation === 'white')
-                    info.body = "Grasz białymi.";
-                else
-                    info.body = "Grasz czarnymi";
 
-                if(currentColor !== 'white')
+                info.body = "Zwycięzca: ".concat(winnerName);
+
+                if(orientation === 'white' && areAllGameCoursesOver === false)
                     info.bodyunderline = "Rozgrywka zakończona, możesz przejść do kolejnej lub opuścić grę.";
                 else
                     info.bodyunderline = "Rozgrywka zakończona, możesz opuścić grę.";
@@ -253,14 +213,11 @@ export const ChessPlay = () =>{
 
         }
 
-        console.log(info);
-
     };
 
     const handleMove = (move) => {
 
-        if(!(isSimulUser && moveDone)){
-            if (chess.move(move)) {
+            if (chess.move(move) && orientation!=='white' ? chess.turn()==='w' : chess.turn()==='b') {
 
                 const moveRequest = new Move();
                 moveRequest.setGameid(values.gameid);
@@ -271,9 +228,6 @@ export const ChessPlay = () =>{
 
                 client.doMove(moveRequest, null, (err, data)=>{
                     if(err) console.log(err);
-                    else if(isSimulUser){
-                        setMoveDone(true);
-                    }
                 });
 
                 if(currentColor === 'white') updateColor('black');
@@ -303,76 +257,24 @@ export const ChessPlay = () =>{
 
                 }
 
-                // Sets state of chess board
                 setFen(chess.fen());
             }
-        }
+
         updateInfo();
     };
 
-    const EndGameModal = (props) => {
-        if(isSimulUser === true && numOfBoards > 1){
-            return (
-                <Modal
-                    {...props}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header>
-                        <Modal.Title id="contained-modal-title-vcenter">
-                            Koniec rozgrywki
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>
-                            Zwycięzca: {winnerName}
-                        </p>
-                        <p>
-                            Możesz przejść do kolejnej planszy lub wrócić do menu głównego.
-                        </p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={()=>nextBoard(gameId)}>Przejście do kolejnej planszy</Button>
-                        <Button href='../gamesPanel'>Powrót do menu głównego</Button>
-                    </Modal.Footer>
-                </Modal>
-            );
-        }
-        else{
-            return (
-                <Modal
-                    {...props}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header>
-                        <Modal.Title id="contained-modal-title-vcenter">
-                            Koniec gry
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>
-                            Zwycięzca: {winnerName}
-                        </p>
-                        <p>
-                            Możesz powrócić do menu głównego.
-                        </p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button href='../gamesPanel'>Powrót do menu głównego</Button>
-                    </Modal.Footer>
-                </Modal>
-            );
-        }
 
-    }
 
     const closeGame = () => {
-        const gameId = new GameId();
-        gameId.setId(gameId);
+        const gameIdRequest = new GameId();
+        gameIdRequest.setId(gameId);
 
-        client.closeGame(gameId, {deadline: 5000}, (err, data)=>{
+        client.closeGame(gameIdRequest, null, (err, data)=>{
             if(err) console.log(err);
+            else{
+                history.push("/");
+                history.push("/gamesPanel");
+            }
         });
     }
 
@@ -383,7 +285,6 @@ export const ChessPlay = () =>{
 
     return(
         <div>
-            {/*<Header />*/}
             <Navbar bg="dark" variant = "dark" expand="lg">
                 <Container>
                     <NavbarBrand>Symultana</NavbarBrand>
@@ -399,8 +300,7 @@ export const ChessPlay = () =>{
             <Container>
                 <p></p>
                 <Row>
-                    <Col sm={8}>
-                        <div className="board-container">
+                    <Col sm={7}>
                             <Chessboard
                                 width={600}
                                 position={fen}
@@ -414,18 +314,21 @@ export const ChessPlay = () =>{
                                     })
                                 }
                             />
-                    </div>
                     </Col>
-                    <Col sm={4}>
-                        <GameInfo info={info}/>
+                    <Col sm={5}>
+                        <GameAlert />
                         <NextButton isSimul={isSimulUser}/>
+                        <Row>
+                            <Col sm> </Col>
+                            <Col sm><CloseButton/></Col>
+                            <Col sm> </Col>
+                        </Row>
+
                     </Col>
                 </Row>
             </Container>
-            <EndGameModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-            />
+
+
         </div>
     );
 
