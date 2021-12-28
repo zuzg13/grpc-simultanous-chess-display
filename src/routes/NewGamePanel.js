@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CreateGame from "../components/CreateGame"
 import {Header} from "../components/Header";
 import { GameServiceClient } from "../protos/game_grpc_web_pb";

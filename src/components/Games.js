@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import { useHistory } from "react-router-dom";
-import { Empty, Result, AddUserMessage} from "../protos/game_pb";
+import { Result, AddUserMessage} from "../protos/game_pb";
 import ErrorInfo from "./ErrorInfo";
 import {Alert} from "react-bootstrap";
 
 
 export const Games = ({games, loggeduser, client}) => {
 
-    const history = useHistory();
     const [errorCode, setErrorCode] = useState({});
 
 

@@ -10,7 +10,6 @@ import {ChessPlay} from "./routes/ChessPlay"
 
 function App() {
 
-    window.localStorage.setItem("userId", 0);
 
     return (
         <div className="container">
