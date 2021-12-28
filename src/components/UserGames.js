@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import { useHistory } from "react-router-dom";
-import { Empty, UserChange} from "../protos/game_pb";
+import {UserChange} from "../protos/game_pb";
 import {Alert} from "react-bootstrap";
 
 
