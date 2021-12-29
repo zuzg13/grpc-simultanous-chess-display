@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Games} from "../components/Games"
 import {UserGames} from "../components/UserGames"
 import {Header} from "../components/Header";
 import {useHistory} from "react-router-dom";
-import {Container, Col, Nav, Navbar, NavbarBrand, Row} from "react-bootstrap";
-import { Empty, GameInfos, User, UserId } from "../protos/game_pb";
-import { GameServiceClient} from "../protos/game_grpc_web_pb";
+import {Col, Container, Nav, Navbar, NavbarBrand, Row} from "react-bootstrap";
+import {Empty, UserId} from "../protos/game_pb";
+import {GameServiceClient} from "../protos/game_grpc_web_pb";
 import useStateWithCallback from 'use-state-with-callback';
 import ErrorInfo from "../components/ErrorInfo";
 
-const client = new GameServiceClient("http://localhost:8080", null, null);
+const client = new GameServiceClient(require('../protos/client_configuration').client_address, null, null);
 
 
 export const GamesPanel = () =>{

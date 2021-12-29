@@ -1,0 +1,1 @@
+export const client_address = "http://localhost:8080";

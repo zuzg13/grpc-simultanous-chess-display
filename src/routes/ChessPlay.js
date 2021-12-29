@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import GameInfo from "../components/GameInfo";
 import {useHistory, useLocation} from "react-router-dom";
-import {Container, Col, Row, Button, Alert, Navbar, Nav, Modal, NavbarBrand} from "react-bootstrap";
+import {Alert, Button, Col, Container, Nav, Navbar, NavbarBrand, Row} from "react-bootstrap";
 import Chessboard from "chessboardjsx";
 import queryString from "query-string";
 import useStateWithCallback from 'use-state-with-callback';
-import { GameId, BoardInfoRequest, SubGameIdRequest, SubGameId, Move, EndSubGameRequest} from "../protos/game_pb";
-import { GameServiceClient } from '../protos/game_grpc_web_pb';
+import {BoardInfoRequest, EndSubGameRequest, GameId, Move, SubGameIdRequest} from "../protos/game_pb";
+import {GameServiceClient} from '../protos/game_grpc_web_pb';
 
-
-const client = new GameServiceClient("http://localhost:8080", null, null);
+const client = new GameServiceClient(require('../protos/client_configuration').client_address, null, null);
 
 const Chess = require("chess.js");
 
