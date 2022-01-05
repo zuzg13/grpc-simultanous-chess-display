@@ -217,7 +217,6 @@ server.addService(systemProto.GameService.service, {
             console.log(call.request);
             const game_id = parseInt(call.request.gameId, 10);
             const user_id = parseInt(call.request.userId, 10);
-            // console.log(gameCourses);
 
             let game_map = games.map(x=>x.id);
             let tmp = game_map.indexOf(game_id);
@@ -228,9 +227,15 @@ server.addService(systemProto.GameService.service, {
             let index = game_map.indexOf(parseInt(call.request.gameId, 10));
 
             if(gameCourses[index].readyUsers.indexOf(user_id) !== -1)
-                callback(null, {}); /// TODO: obsługa blędow
+                callback({
+                    code: grpc.status.INVALID_ARGUMENT,
+                    message: "User already started game",
+                });
             if(gameCourses[index].readyUsers.length === capacity)
-                callback(null, {})
+                callback({
+                    code: grpc.status.INVALID_ARGUMENT,
+                    message: "Game already started by all users",
+                })
 
             gameCourses[index].readyUsers.push(user_id);
 
@@ -490,7 +495,6 @@ server.bindAsync(
     "0.0.0.0:9090",
     grpc.ServerCredentials.createInsecure(),
     (error, port) => {
-        console.log("Server at port:", port);
         console.log("Server running at http://0.0.0.0:9090");
         server.start();
     }
